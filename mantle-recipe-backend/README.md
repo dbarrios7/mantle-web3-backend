@@ -1,121 +1,133 @@
-# Backend de Recetas NFT en Mantle Network
+### Mantle Recipe NFT Backend
 
-Backend completo en Node.js con Express y ethers.js para un sistema de recetas NFT en la red Mantle que incluye autenticación con wallet, minting de NFTs y sistema de votación con recompensas.
+A complete Node.js backend with Express and ethers.js for a recipe NFT system on the Mantle Network, featuring wallet authentication, NFT minting, and a voting system with rewards.
 
-## 🚀 Características
+## 🚀 Features
 
-- **Autenticación con Wallet**: Sistema de nonce y verificación de firma con JWT
-- **Minting de NFTs**: Creación de recetas como NFTs con metadata en IPFS
-- **Sistema de Votación**: Votación semanal con recompensas en tokens MNT
-- **Base de Datos**: MongoDB para almacenamiento de datos
-- **Seguridad**: Rate limiting, validación de datos, manejo de errores
-- **Automatización**: Cron jobs para finalización de votaciones
+- **Wallet Authentication**: Nonce system and signature verification with JWT
+- **NFT Minting**: Create recipes as NFTs with metadata stored on IPFS
+- **Voting System**: Weekly voting with MNT token rewards
+- **Database**: MongoDB for data storage
+- **Security**: Rate limiting, data validation, error handling
+- **Automation**: Cron jobs for finalizing votes
 
-## 📋 Requisitos Previos
+
+## 📋 Prerequisites
 
 - Node.js v18+
 - MongoDB
-- Cuenta en Pinata o Infura para IPFS
-- Wallet con MNT para transacciones de admin
+- Pinata or Infura account for IPFS
+- Wallet with MNT for admin transactions
 
-## 🛠️ Instalación
 
-1. Clonar el repositorio:
-\`\`\`bash
-git clone <repo-url>
+## 🛠️ Installation
+
+1. Clone the repository:
+
+
+```shellscript
+git clone https://github.com/yourusername/mantle-recipe-backend.git
 cd mantle-recipe-backend
-\`\`\`
+```
 
-2. Instalar dependencias:
-\`\`\`bash
+2. Install dependencies:
+
+
+```shellscript
 npm install
-\`\`\`
+```
 
-3. Configurar variables de entorno:
-\`\`\`bash
+3. Configure environment variables:
+
+
+```shellscript
 cp .env.example .env
-# Editar .env con tus valores
-\`\`\`
+# Edit .env with your values
+```
 
-4. Iniciar el servidor:
-\`\`\`bash
-# Desarrollo
+4. Start the server:
+
+
+```shellscript
+# Development
 npm run dev
 
-# Producción
+# Production
 npm start
-\`\`\`
+```
 
-## 🔧 Configuración
+## 🔧 Configuration
 
-### Variables de Entorno
+### Environment Variables
 
-Copia `.env.example` a `.env` y configura:
+Copy `.env.example` to `.env` and configure:
 
-- `MONGODB_URI`: URL de conexión a MongoDB
-- `JWT_SECRET`: Clave secreta para JWT
-- `RPC_URL`: URL RPC de Mantle Network
-- `PRIVATE_KEY`: Clave privada del wallet admin
-- `PINATA_JWT`: Token JWT de Pinata para IPFS
-- Direcciones de contratos desplegados
+- `MONGODB_URI`: MongoDB connection URL
+- `JWT_SECRET`: Secret key for JWT
+- `RPC_URL`: Mantle Network RPC URL
+- `PRIVATE_KEY`: Admin wallet private key
+- `PINATA_JWT`: Pinata JWT token for IPFS
+- Deployed contract addresses
 
-### Contratos Requeridos
 
-Necesitas desplegar estos contratos en Mantle:
+### Required Smart Contracts
 
-1. **RecipeNFT** (ERC-721): Para mintear recetas como NFTs
-2. **VotingContract**: Para gestionar propuestas y votaciones
-3. **MNT Token**: Token para recompensas (puede usar el nativo)
+You need to deploy these contracts on Mantle:
+
+1. **RecipeNFT** (ERC-721): For minting recipes as NFTs
+2. **VotingContract**: For managing proposals and votes
+3. **MNT Token**: Token for rewards (can use the native token)
+
 
 ## 📡 API Endpoints
 
-### Autenticación
+### Authentication
 
-\`\`\`bash
-# Generar nonce
+```shellscript
+# Generate nonce
 GET /api/auth/nonce?address=0x...
 
-# Verificar firma y obtener JWT
+# Verify signature and get JWT
 POST /api/auth/verify
 {
   "address": "0x...",
   "signature": "0x..."
 }
-\`\`\`
+```
 
-### Recetas
+### Recipes
 
-\`\`\`bash
-# Crear receta NFT
+```shellscript
+# Create NFT recipe
 POST /api/recipes
 Authorization: Bearer <jwt>
 {
   "title": "Pizza Margherita",
-  "ingredients": ["Masa", "Tomate", "Mozzarella"],
-  "steps": ["Preparar masa", "Añadir ingredientes", "Hornear"]
+  "ingredients": ["Dough", "Tomato", "Mozzarella"],
+  "steps": ["Prepare dough", "Add ingredients", "Bake"]
 }
 
-# Obtener todas las recetas
+# Get all recipes
 GET /api/recipes?page=1&limit=10
 
-# Obtener receta por token ID
+# Get recipe by token ID
 GET /api/recipes/123
 
-# Obtener recetas de usuario
+# Get user recipes
 GET /api/recipes/user/0x...
-\`\`\`
+```
 
-### Votación
+### Voting
 
-\`\`\`bash
-# Crear propuesta (solo admin)
+```shellscript
+# Create proposal (admin only)
 POST /api/vote/proposal
 Authorization: Bearer <jwt>
 {
   "tokenId": 123
 }
 
-# Registrar voto
+# Register vote
 POST /api/vote
 Authorization: Bearer <jwt>
 {
@@ -123,81 +135,97 @@ Authorization: Bearer <jwt>
   "txHash": "0x..."
 }
 
-# Obtener propuestas activas
+# Get active proposals
 GET /api/vote/proposals
 
-# Obtener ganador semanal
+# Get weekly winner
 GET /api/vote/weekly-winner
-\`\`\`
+```
 
-## 🏗️ Estructura del Proyecto
+## 🏗️ Project Structure
 
-\`\`\`
+```plaintext
 ├── config/
-│   ├── database.js          # Configuración MongoDB
-│   └── blockchain.js        # Configuración ethers.js
+│   ├── database.js          # MongoDB configuration
+│   └── blockchain.js        # ethers.js configuration
 ├── controllers/
-│   ├── authController.js    # Controlador de autenticación
-│   ├── recipeController.js  # Controlador de recetas
-│   └── voteController.js    # Controlador de votación
+│   ├── authController.js    # Authentication controller
+│   ├── recipeController.js  # Recipe controller
+│   └── voteController.js    # Voting controller
 ├── middleware/
-│   ├── auth.js             # Middleware de autenticación
-│   └── errorHandler.js     # Manejo global de errores
+│   ├── auth.js              # Authentication middleware
+│   └── errorHandler.js      # Global error handling
 ├── models/
-│   ├── User.js             # Modelo de usuario
-│   ├── Recipe.js           # Modelo de receta
-│   ├── Vote.js             # Modelo de voto
-│   └── Proposal.js         # Modelo de propuesta
+│   ├── User.js              # User model
+│   ├── Recipe.js            # Recipe model
+│   ├── Vote.js              # Vote model
+│   └── Proposal.js          # Proposal model
 ├── routes/
-│   ├── auth.js             # Rutas de autenticación
-│   ├── recipes.js          # Rutas de recetas
-│   └── vote.js             # Rutas de votación
+│   ├── auth.js              # Authentication routes
+│   ├── recipes.js           # Recipe routes
+│   └── vote.js              # Voting routes
 ├── services/
-│   ├── authService.js      # Lógica de autenticación
-│   ├── ipfsService.js      # Integración con IPFS
-│   ├── recipeService.js    # Lógica de recetas
-│   └── votingService.js    # Lógica de votación
+│   ├── authService.js       # Authentication logic
+│   ├── ipfsService.js       # IPFS integration
+│   ├── recipeService.js     # Recipe logic
+│   └── votingService.js     # Voting logic
 ├── utils/
-│   └── helpers.js          # Funciones auxiliares
-└── server.js               # Punto de entrada
-\`\`\`
+│   └── helpers.js           # Helper functions
+└── server.js                # Entry point
+```
 
-## 🔄 Flujo de Trabajo
+## 🔄 Workflow
 
-### 1. Autenticación
-1. Frontend solicita nonce: `GET /api/auth/nonce?address=0x...`
-2. Usuario firma mensaje con nonce en MetaMask
-3. Frontend envía firma: `POST /api/auth/verify`
-4. Backend verifica y devuelve JWT
+### 1. Authentication
 
-### 2. Crear Receta NFT
-1. Usuario autenticado envía datos de receta
-2. Backend sube metadata a IPFS
-3. Backend mintea NFT en contrato
-4. Se guarda registro en MongoDB
+1. Frontend requests nonce: `GET /api/auth/nonce?address=0x...`
+2. User signs message with nonce in MetaMask
+3. Frontend sends signature: `POST /api/auth/verify`
+4. Backend verifies and returns JWT
 
-### 3. Sistema de Votación
-1. Admin crea propuesta semanal
-2. Usuarios votan desde frontend (transacción on-chain)
-3. Backend registra votos en BD
-4. Cron job finaliza votación y distribuye recompensas
 
-## 🛡️ Seguridad
+### 2. Create NFT Recipe
 
-- Rate limiting para prevenir spam
-- Validación de datos con express-validator
-- Autenticación JWT con roles
-- Verificación de firmas criptográficas
-- Manejo seguro de claves privadas
+1. Authenticated user sends recipe data
+2. Backend uploads metadata to IPFS
+3. Backend mints NFT on contract
+4. Record is saved in MongoDB
 
-## 🚨 Consideraciones de Producción
 
-1. **Claves Privadas**: Usar servicios como AWS KMS o HashiCorp Vault
-2. **Base de Datos**: Configurar réplicas y backups
-3. **Monitoreo**: Implementar logging y métricas
-4. **Escalabilidad**: Considerar load balancers y clustering
-5. **Gas Fees**: Implementar estimación y optimización de gas
+### 3. Voting System
 
-## 📝 Licencia
+1. Admin creates weekly proposal
+2. Users vote from frontend (on-chain transaction)
+3. Backend registers votes in DB
+4. Cron job finalizes voting and distributes rewards
+
+
+## 🛡️ Security
+
+- Rate limiting to prevent spam
+- Data validation with express-validator
+- JWT authentication with roles
+- Cryptographic signature verification
+- Secure private key handling
+
+
+## 🚨 Production Considerations
+
+1. **Private Keys**: Use services like AWS KMS or HashiCorp Vault
+2. **Database**: Configure replicas and backups
+3. **Monitoring**: Implement logging and metrics
+4. **Scalability**: Consider load balancers and clustering
+5. **Gas Fees**: Implement gas estimation and optimization
+
+
+## 📝 License
 
 MIT License
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📧 Contact
+
+For questions or support, please open an issue in the repository or contact the maintainer at barriosahumadadiego@gmail.com
